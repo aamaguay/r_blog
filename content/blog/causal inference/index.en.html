@@ -1,0 +1,254 @@
+---
+title: 'MatchIt Example: Nonparametric Preprocessing for Parametric Causal Inference'
+author: admin
+date: '2021-11-09T21:13:14-05:00'
+summary: This blog shows an example about using **MachtIt package** with **Lalonde
+  data set**.
+categories: R
+tags:
+- R
+- Causal Inference
+- Microeconomics
+image:
+  placement: 1
+  caption: ''
+  focal_point: ''
+  preview_only: no
+---
+
+<script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
+
+
+<style type="text/css">
+
+body {
+  font-size: 14pt;
+}
+
+h1 { /* Header 2 */
+    font-size: 32px;
+    color: #cf0a0d;
+    font-weight: bold;
+}
+
+h2 { /* Header 1 */
+  font-size: 24px;
+  color: #d3ad12;
+  font-weight: bold;
+}
+
+</style>
+<div id="formation-of-treated-and-control-groups-for-causal-inference" class="section level1">
+<h1>Formation of Treated and Control groups for Causal Inference</h1>
+<p><strong><em>MatchIt</em></strong> is a R package for processing data using nonparametric matching methods to improve the estimation of parametric statistical models.<br />
+See more information about package <a href="https://www.jstatsoft.org/article/view/v042i08">here</a>.</p>
+<p>In this example I use a <strong>lalonde</strong> data set, where each row has the data of a person with some features and a treatment variable <strong>(job training program)</strong>. The goal of this example is to evaluate the effectiveness of the treatment on an individual’s income a few years after completing the program.</p>
+<p>First, I show statistical metrics about the data set, where:</p>
+<ul>
+<li><strong>treat</strong> is a binary variable and if it’s equal to 1 a person took the treatment and 0 is the opposite case.</li>
+<li><strong>age</strong> is the age of a person.</li>
+<li><strong>educ</strong> is the years of schooling of a person.<br />
+</li>
+<li><strong>race</strong> is a categorical variable and represent the race of a person, e.g. black, hispan, white.</li>
+<li><strong>married</strong> is a binary variable and if it’s equall to 1 a person is married and 0 is the opposite case.</li>
+<li><strong>nodegree</strong> is a binary variable and if it’s equall to 1 a person had not a degree and 0 is the opposite case.</li>
+<li><strong>re74</strong> is the real earnings in 1974.</li>
+<li><strong>re75</strong> is the real earnings in 1975.<br />
+</li>
+<li><strong>re78</strong> is the real earnings in 1978.</li>
+</ul>
+<pre class="r"><code>library(&quot;MatchIt&quot;)
+data(&quot;lalonde&quot;)
+summary(lalonde)
+##      treat             age             educ           race        married      
+##  Min.   :0.0000   Min.   :16.00   Min.   : 0.00   black :243   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:20.00   1st Qu.: 9.00   hispan: 72   1st Qu.:0.0000  
+##  Median :0.0000   Median :25.00   Median :11.00   white :299   Median :0.0000  
+##  Mean   :0.3013   Mean   :27.36   Mean   :10.27                Mean   :0.4153  
+##  3rd Qu.:1.0000   3rd Qu.:32.00   3rd Qu.:12.00                3rd Qu.:1.0000  
+##  Max.   :1.0000   Max.   :55.00   Max.   :18.00                Max.   :1.0000  
+##     nodegree           re74            re75              re78        
+##  Min.   :0.0000   Min.   :    0   Min.   :    0.0   Min.   :    0.0  
+##  1st Qu.:0.0000   1st Qu.:    0   1st Qu.:    0.0   1st Qu.:  238.3  
+##  Median :1.0000   Median : 1042   Median :  601.5   Median : 4759.0  
+##  Mean   :0.6303   Mean   : 4558   Mean   : 2184.9   Mean   : 6792.8  
+##  3rd Qu.:1.0000   3rd Qu.: 7888   3rd Qu.: 3249.0   3rd Qu.:10893.6  
+##  Max.   :1.0000   Max.   :35040   Max.   :25142.2   Max.   :60307.9</code></pre>
+<p>Now, I process the data using <em>fastDummies</em> library to create binary variables of the categorical feature (race) and rename these variables. Moreover, in this example I only use the <strong>re78</strong> variable.</p>
+<pre class="r"><code>library(dplyr)
+## 
+## Attaching package: &#39;dplyr&#39;
+## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union
+library(fastDummies)
+lalonde &lt;- dummy_cols(lalonde, select_columns = c(&#39;race&#39;),remove_selected_columns = TRUE) %&gt;% 
+  rename(
+    black = race_black,
+    hispan = race_hispan,
+    white= race_white )</code></pre>
+<div id="exploratory-data-analysis" class="section level2">
+<h2>Exploratory Data Analysis</h2>
+<p>The average income of the Control Group is more bigger than the Treatment Group in 1974 (5619 vs 2095)</p>
+<pre class="r"><code>table_comp_74 &lt;-lalonde %&gt;% 
+  group_by(treat) %&gt;% 
+  summarise_at( vars(re74), list(mean = mean, median = median ))
+head(table_comp_74)
+## # A tibble: 2 × 3
+##   treat  mean median
+##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1     0 5619.  2547.
+## 2     1 2096.     0</code></pre>
+<p>The difference in mean income of the Control and Treatment groups appear to be reduced in 1978. (6984 vs 6349)</p>
+<pre class="r"><code>table_comp_78 &lt;-lalonde %&gt;% 
+  group_by(treat) %&gt;% 
+  summarise_at( vars(re78), list(mean = mean, median = median ))
+head(table_comp_78)
+## # A tibble: 2 × 3
+##   treat  mean median
+##   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1     0 6984.  4976.
+## 2     1 6349.  4232.</code></pre>
+<p>The control group has higher earning that the treatment group - does this mean the treatment had a negative impact?</p>
+<pre class="r"><code>library(scales)
+par(mfrow=c(3,1), mar=c(3,4,3,1))
+lalonde %&gt;% 
+  filter( treat ==1 ) %&gt;%
+  with(hist(re74 ,col=&#39;skyblue&#39;,border=FALSE,breaks= 20,
+            main=&#39;Earning distribution of treatment and control 74&#39;)) 
+lalonde %&gt;% 
+  filter( treat ==0 ) %&gt;%
+  with(hist(re74 ,col=scales::alpha(&#39;red&#39;,.5),breaks= 20, border=FALSE, add=TRUE,
+            main=&#39;Earning distribution of treatment and control 74&#39;))
+legend(x=30000,y=100,c(&quot;treatment&quot;,&quot;control&quot;),cex=.8,col=c(&quot;skyblue&quot;,scales::alpha(&#39;red&#39;,.5)),
+       fill=c(&quot;skyblue&quot;,scales::alpha(&#39;red&#39;,.5)))
+
+lalonde %&gt;% 
+  filter( treat ==1 ) %&gt;%
+  with(hist(educ ,col=&#39;skyblue&#39;,border=FALSE,breaks= 20,
+            main=&#39;Educ. distribution of treatment and control&#39;)) 
+lalonde %&gt;% 
+  filter( treat ==0 ) %&gt;%
+  with(hist(educ ,col=scales::alpha(&#39;red&#39;,.5),breaks= 20, border=FALSE, add=TRUE,
+            main=&#39;Edu. of treatment and control&#39;))
+legend(x=14,y=40,c(&quot;treatment&quot;,&quot;control&quot;),cex=.8,col=c(&quot;skyblue&quot;,scales::alpha(&#39;red&#39;,.5)),
+       fill=c(&quot;skyblue&quot;,scales::alpha(&#39;red&#39;,.5)))
+
+lalonde %&gt;% 
+  filter( treat ==1 ) %&gt;%
+  with(hist(age ,col=&#39;skyblue&#39;,border=FALSE,breaks= 20,
+            main=&#39;Age distribution of treatment and control&#39;)) 
+lalonde %&gt;% 
+  filter( treat ==0 ) %&gt;%
+  with(hist(age ,col=scales::alpha(&#39;red&#39;,.5),breaks= 20, border=FALSE, add=TRUE,
+            main=&#39;Age of treatment and control&#39;))
+legend(x=45,y=24,c(&quot;treatment&quot;,&quot;control&quot;),cex=.8,col=c(&quot;skyblue&quot;,scales::alpha(&#39;red&#39;,.5)),
+       fill=c(&quot;skyblue&quot;,scales::alpha(&#39;red&#39;,.5)))</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="matching-process" class="section level2">
+<h2>Matching Process</h2>
+<p>After processing data, I run an logit model to analysis some previous results about <strong>Propensity score model</strong>. It used the treatment variable like depend variable and the others variables are independent variables. The equation looks something like this:</p>
+<p><span class="math display">\[P\left(treatment_{i}=1|X\right) = age_{i}+edu_{i}+married_{i}+nodegree_{i}+re78_{i}+black_{i}+hispan_{i}\]</span></p>
+<p>I estimate that equation and analyze the beta coefficients and their statistical significant. Also, the white dummy variable is omitted when I estimate the equation.</p>
+<p>The results show:</p>
+<ul>
+<li><strong>educ</strong>, <strong>nodegree</strong>, <strong>black</strong>, <strong>hispan</strong> have a positive relationship with the treatment variable and are statistically significant.</li>
+<li><strong>married</strong> has a negative relationship with the treatment variable and is statistically significant.</li>
+</ul>
+<pre class="r"><code>library(glm2)
+propensity.score.model &lt;- glm(treat ~ age+educ+married+nodegree+black+hispan,family=binomial() , data= lalonde)
+pscore &lt;- propensity.score.model$fitted.values
+summary(propensity.score.model)
+## 
+## Call:
+## glm(formula = treat ~ age + educ + married + nodegree + black + 
+##     hispan, family = binomial(), data = lalonde)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.7709  -0.4606  -0.2963   0.7766   2.6384  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -4.67874    1.02120  -4.582 4.61e-06 ***
+## age          0.01030    0.01329   0.775  0.43857    
+## educ         0.15161    0.06568   2.308  0.02098 *  
+## married     -0.92969    0.27128  -3.427  0.00061 ***
+## nodegree     0.78719    0.33507   2.349  0.01881 *  
+## black        3.12657    0.28514  10.965  &lt; 2e-16 ***
+## hispan       0.99947    0.42191   2.369  0.01784 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 751.49  on 613  degrees of freedom
+## Residual deviance: 494.70  on 607  degrees of freedom
+## AIC: 508.7
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>After analyzing the results, I apply the matching method to form the new control and treatment groups.
+The following shows the parameters used by the function:</p>
+<pre><code>matchit(formula, data, method = &quot;nearest&quot;, distance = &quot;logit&quot;,
+               distance.options = list(), discard = &quot;none&quot;,
+               reestimate = FALSE, ...)</code></pre>
+<p>Where:
+These are the main arguments:</p>
+<ul>
+<li><strong>formula</strong>: this argument takes the usual syntax of R formula.</li>
+<li><strong>data</strong>: this argument specifies the used data.</li>
+<li><strong>method</strong>: this argument specifies a matching method.
+<ul>
+<li>“exact” (exact matching)</li>
+<li>“full” (full matching)</li>
+<li>“genetic” (genetic matching)</li>
+<li>“nearest” (nearest neighbor matching), it’s the default option.</li>
+<li>“optimal” (optimal matching)</li>
+<li>“subclass” (subclassification)</li>
+</ul></li>
+<li><strong>distance</strong>: this argument specifies the method used to estimate the distance measure (logistic regression <em>“logit”</em> is the default option).</li>
+<li><strong>discard</strong>: this argument specifies whether to discard units that fall outside some measure of support of the distance score before matching, and not allow them to be used at all in the matching procedure. Note that discarding units may change the quantity of interest being estimated. The options are:
+<ul>
+<li><strong>“none”</strong> is the default, which discards no units before matching</li>
+<li><strong>“both”</strong> which discards all units (treated and control) that are outside the support of the distance measure</li>
+<li><strong>“control”</strong> which discards only control units outside the support of the distance measure of the treated units</li>
+<li><strong>“treat”</strong> which discards only treated units outside the support of the distance measure of the control units.</li>
+</ul></li>
+<li><strong>reestimate</strong>: this argument specifies whether the model for distance measure should be re-estimated after units are discarded. The input must be a logical value. The default is FALSE.</li>
+<li><strong>ratio</strong>: it’s about how many control units should be matched to each treated unit in k:1 matching.</li>
+</ul>
+<p>Here, I apply the <em>matchit process</em> with a ratio of 2.</p>
+<pre class="r"><code>match_method &lt;- matchit(treat ~ age+educ+married+nodegree+black+hispan , 
+                        data=lalonde,  method=&#39;nearest&#39;,ratio= 2 )
+match_method
+## A matchit object
+##  - method: Variable ratio 2:1 nearest neighbor matching without replacement
+##  - distance: Propensity score
+##              - estimated with logistic regression
+##  - number of obs.: 614 (original), 555 (matched)
+##  - target estimand: ATT
+##  - covariates: age, educ, married, nodegree, black, hispan</code></pre>
+<p>Then, I show the propensity score distribution before and after matching.
+You can see that there are many observations with a probability or propensity score less than 0.15.</p>
+<pre class="r"><code>plot(match_method ,type=&#39;jitter&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre><code>## [1] &quot;To identify the units, use first mouse button; to stop, use second.&quot;
+## integer(0)</code></pre>
+<p>A histogram plot is shown below and you can see that the propensity score distribution for the treated and control groups doesn’t change significantly (before &amp; after Matching)</p>
+<pre class="r"><code>plot(match_method, type=&#39;hist&#39;, col.axis=4 )</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+Mean difference of each variable for before and after <em>match process</em></p>
+<pre class="r"><code>library(cobalt)
+love.plot(bal.tab(match_method,binary=&#39;std&#39;, m.threshold=0.3),
+          stat=&#39;mean.diffs&#39;, abs=F, shapes=c(&#39;triangle filled&#39;, &#39;circle filled&#39;),
+          colors = c(&quot;red&quot;, &quot;blue&quot;), sample.names = c(&quot;Before Match&quot;, &quot;After Match&quot;) )</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Now, I save the new treatment and control groups and can used for estimate model.</p>
+<pre class="r"><code>new_treat &lt;- match.data(match_method, group=&#39;treat&#39;)
+new_control &lt;- match.data(match_method, group=&#39;control&#39;)</code></pre>
+</div>
+</div>

@@ -1,0 +1,234 @@
+---
+title: "Time Series Models"
+author: admin
+date: '2022-02-09T21:13:14-05:00'
+summary: This blog shows the application of some time series methods with an example.
+categories: R
+tags:
+- R
+- Time Series
+image:
+  placement: 1
+  caption: ''
+  focal_point: ''
+  preview_only: no
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<style type="text/css">
+
+body {
+  font-size: 14pt;
+}
+
+h1 { /* Header 2 */
+    font-size: 32px;
+    color: DarkBlue;
+    font-weight: bold;
+}
+
+h2 { /* Header 1 */
+  font-size: 24px;
+  color: #5eae31;
+  font-weight: bold;
+}
+
+
+</style>
+
+# Time Series Example
+
+The purpose of this bog is compare the performance of some forecast methods in order to select the best option.
+
+## Import packages and additional functions
+```{r, include=TRUE,echo=TRUE, message=FALSE}
+library(dplyr)
+library(readr)
+library(forecast)
+library(xts)
+
+# functions
+rmse <- function(real,prediction){
+  error <- real - prediction
+  return( sqrt(mean(error^2)) )
+}
+
+plot_df <- function(df, title_text){
+  plot(xts( df[,c('real','prediction')], order.by = df$row ) , 
+       type = "l", main = title_text, col = c("#ff3644","#2f002f"),
+       ylab = 'values', legend.loc = "bottomleft", lty = c("solid","dashed") )
+}
+
+create_df_compare <- function(real, prediction){
+  df <- data.frame(real= real ,prediction = prediction,
+             row =  seq(as.Date('1987-03-01'), length = length(real), by = "month") )
+  return(df)
+}
+```
+## Load data set
+First, I loaded the *.dat file* and then plotted the time series to make a visual analysis.
+```{r, include=TRUE}
+variable <- round(read.delim('serie.dat',header=FALSE),2)
+cat('The file has: ', nrow(variable), 'observations.\n')
+
+summary(variable)
+plot(xts(x= variable$V1, 
+         order.by = seq(as.Date('1976-01-01'), length = length(variable$V1), by = "month")), 
+     type="l", col="#2f002f", lwd=2, main = 'Evolution of Time serie', ylab = 'Values')
+```
+
+## Split in train and test data set
+Subsequently, I divided the total data in train (80%) and test (20%).
+
+- The Train data had 134 observations (from "1976-01-01" to "1987-02-01").
+- The Train data had 34 observations (from "1987-02-01" to "1989-11-01").
+
+Also, I show the plots about train and test data.
+
+```{r, include=TRUE}
+train_df <- variable[1:round(length(variable$V1)*0.8,0), ]  
+test_df <- variable[(round(length(variable$V1)*0.8,0)+1): nrow(variable), ] 
+
+par(mfrow=c(2,1), mar=c(3,4,3,1))
+plot(xts(x= train_df, order.by = seq(as.Date('1976-01-01'), length = length(train_df), by = "month") ) ,
+     type="l", col="#2f002f", main ='time series variable- train')
+plot(xts(x= test_df, order.by = seq(as.Date('1987-02-01'), length = length(test_df), by = "month")),
+     type="l", col="#2f002f", main ='time series variable-test')
+
+```
+
+# Time serie Descomposition
+```{r, include=TRUE}
+descomp <- decompose(ts(train_df,frequency = 12,start = 1976))
+plot(descomp)
+```
+
+# Models
+
+## Arima
+I used an *auto arima* with a Box-Cox transformation. The model had for the the Non-seasonal part the following results: *p = 0, d=1, q= 0*, while for the seasonal part: *p = 2, d=1, q= 2*. In summary, first difference had to be applied to the variable and a relevant seasonal pattern was detected.
+
+```{r, include=TRUE}
+arima_model <- auto.arima(ts(train_df,frequency = 12,start = 1976), lambda='auto')
+print(arima_model)
+```
+
+## Drift model
+
+The drift model was estimated with a Box-Cox transformation. Below I show the specification on this model.
+```{r, echo=FALSE}
+drift_model <- rwf(ts(train_df,frequency = 12,start = 1976), drift = TRUE, level = c(80, 95), fan = FALSE,
+    lambda = "auto", biasadj = TRUE, bootstrap = FALSE, npaths = 5000,
+    x = train_df, h = length(test_df))
+
+summary(drift_model)
+```
+
+## Naive model
+
+The naive model was estimated with a Box-Cox transformation. Below I show the specification on this model.
+```{r, include=TRUE}
+naive_model <- naive(ts(train_df,frequency = 12,start = 1976), level = c(80, 95), fan = FALSE, lambda = "auto",
+                     biasadj = TRUE, bootstrap = FALSE, npaths = 5000, x = train_df, h = length(test_df) )
+summary(naive_model)
+```
+
+## Snaive model
+
+The snaive model was estimated with a Box-Cox transformation. Below I show the specification on this model.
+```{r,include=TRUE}
+snaive_model <- snaive(ts(train_df,frequency = 12,start = 1976), level = c(80, 95), fan = FALSE,
+       lambda = 'auto', biasadj = TRUE, bootstrap = FALSE, npaths = 5000,
+       x = train_df, h = length(test_df) )
+summary(snaive_model)
+```
+
+## Stl model
+
+Below I show the specification on this model.
+```{r, include=TRUE}
+stl_model <- stl(ts(train_df,frequency = 12,start = 1976), s.window = 12, t.window = 12, t.jump = 1)
+summary(stl_model)
+```
+
+## Holt-Winters (additive & multiplicative)
+
+The *hw additive & multiplicative* models was estimated with a Box-Cox transformation. Below I show the specification on this model. Moreover, they used a damped trend.
+
+```{r, include=TRUE}
+hw_additive <- hw(ts(train_df,frequency = 12,start = 1976) ,
+                  seasonal="additive", m= 12, lambda="auto", damped= TRUE, h=length(test_df))
+cat('additive model summary\n')
+summary(hw_additive)
+
+hw_multiplicative <- hw(ts(train_df,frequency = 12,start = 1976),
+                        seasonal="multiplicative", m= 12, lambda=NULL, damped= TRUE,h=length(test_df))
+cat('multiplicative model summary\n')
+summary(hw_multiplicative)
+```
+
+# Predictions of test data
+
+Then, I saved the predictions of the test data for each model.
+
+```{r, include=TRUE}
+pred_arima <- forecast(arima_model, h = length(test_df))
+pred_drift <- drift_model
+pred_naive <- naive_model
+pred_snaive <- snaive_model 
+pred_stl <- forecast(stl_model,h= length(test_df))
+pred_hw_add <- hw_additive
+pred_hw_mult <- hw_multiplicative
+```
+
+# Compare results of each models
+
+Here, I made a graph in order to compare the models performance.
+
+```{r, include=TRUE}
+arima_compare = create_df_compare(test_df, c(pred_arima$mean))
+drift_compare = create_df_compare(test_df, c(pred_drift$mean))
+naive_compare = create_df_compare(test_df, c(pred_naive$mean))
+snaive_compare = create_df_compare(test_df, c(pred_snaive$mean))
+stl_compare = create_df_compare(test_df, c(pred_stl$mean))
+hw_add_compare = create_df_compare(test_df, c(pred_hw_add$mean))
+hw_mult_compare = create_df_compare(test_df, c(pred_hw_mult$mean))
+
+plot_df(arima_compare, "Results Real vs Arima" )
+plot_df(drift_compare, "Results Real vs drift" )
+plot_df(naive_compare, "Results Real vs Naive" )
+plot_df(snaive_compare, "Results Real vs Snaive" )
+plot_df(stl_compare, "Results Real vs Stl" )
+plot_df(hw_add_compare, "Results Real vs Hw. Add." )
+plot_df(hw_mult_compare, "Results Real vs Hw. Mult." )
+
+```
+
+# RMSE for each model
+
+Now, I compute the *rmse* using the test data and the predictions of each model.
+
+```{r, include=TRUE}
+rmse_arima <- rmse( c(pred_arima$mean),test_df )
+rmse_drift <- rmse(  c(pred_drift$mean), test_df )
+rmse_naive <- rmse(  c(pred_naive$mean), test_df )
+rmse_snaive <- rmse(  c(pred_snaive$mean), test_df )
+rmse_stl <- rmse(  c(pred_stl$mean), test_df )
+rmse_hw_add <- rmse(  c(pred_hw_add$mean), test_df )
+rmse_hw_mult <- rmse(  c(pred_hw_mult$mean), test_df )
+
+```
+
+# Results
+
+I saved the results in a data frame sorted by rmse in ascending order where the first row is the best model with the lowest rmse. 
+The best model was **hw multiplicative** with a rmse of 0.78 and the worst was **drift model** with a rmse of 3.49.
+
+```{r,include=TRUE}
+df_rmse <- data.frame(method= c('arima', 'drift', 'naive', 'snaive', 'stl', 'hw_additive', 'hw_multiplicative'),
+              rmse_values = c(rmse_arima, rmse_drift, rmse_naive, rmse_snaive, rmse_stl, rmse_hw_add, rmse_hw_mult) ) %>% 
+  arrange((rmse_values))
+
+df_rmse
+```

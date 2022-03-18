@@ -1,0 +1,213 @@
+---
+title: 'MatchIt Example: Nonparametric Preprocessing for Parametric Causal Inference'
+author: admin
+date: '2021-11-09T21:13:14-05:00'
+summary: This blog shows an example about using **MachtIt package** with **Lalonde
+  data set**.
+categories: R
+tags:
+- R
+- Causal Inference
+- Microeconomics
+image:
+  placement: 1
+  caption: ''
+  focal_point: ''
+  preview_only: no
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+<style type="text/css">
+
+body {
+  font-size: 14pt;
+}
+
+h1 { /* Header 2 */
+    font-size: 32px;
+    color: #cf0a0d;
+    font-weight: bold;
+}
+
+h2 { /* Header 1 */
+  font-size: 24px;
+  color: #d3ad12;
+  font-weight: bold;
+}
+
+</style>
+
+# Formation of Treated and Control groups for Causal Inference
+
+***MatchIt*** is a R package for processing data using nonparametric matching methods to improve the estimation of parametric statistical models.  
+See more information about package [here](https://www.jstatsoft.org/article/view/v042i08).
+ 
+In this example I use a **lalonde** data set, where each row has the data of a person with some features and a treatment variable **(job training program)**. The goal of this example is to evaluate the effectiveness of the treatment on an individual's income a few years after completing the program.
+
+First, I show statistical metrics about the data set, where:
+
+- **treat** is a binary variable and if it's equal to 1 a person took the treatment and 0 is the opposite case.
+- **age** is the age of a person. 
+- **educ** is the years of schooling of a person.    
+- **race** is a categorical variable and represent the race of a person, e.g. black, hispan, white.
+- **married** is a binary variable and if it's equall to 1 a person is married and 0 is the opposite case.
+- **nodegree** is a binary variable and if it's equall to 1 a person had not a degree and 0 is the opposite case.
+- **re74** is the real earnings in 1974.
+- **re75** is the real earnings in 1975.  
+- **re78** is the real earnings in 1978.
+
+```{r ,echo=TRUE}
+library("MatchIt")
+data("lalonde")
+summary(lalonde)
+```
+
+Now, I process the data using *fastDummies* library to create binary variables of the categorical feature (race) and rename these variables. Moreover, in this example I only use the **re78** variable.
+
+```{r ,echo=TRUE}
+library(dplyr)
+library(fastDummies)
+lalonde <- dummy_cols(lalonde, select_columns = c('race'),remove_selected_columns = TRUE) %>% 
+  rename(
+    black = race_black,
+    hispan = race_hispan,
+    white= race_white )
+```
+
+## Exploratory Data Analysis
+The average income of the Control Group is more bigger than the Treatment Group in 1974 (5619 vs 2095)
+```{r include=TRUE}
+table_comp_74 <-lalonde %>% 
+  group_by(treat) %>% 
+  summarise_at( vars(re74), list(mean = mean, median = median ))
+head(table_comp_74)
+```
+The difference in mean income of the Control and Treatment groups appear to be reduced in 1978. (6984 vs 6349)
+
+```{r include=TRUE}
+table_comp_78 <-lalonde %>% 
+  group_by(treat) %>% 
+  summarise_at( vars(re78), list(mean = mean, median = median ))
+head(table_comp_78)
+```
+The control group has higher earning that the treatment group - does this mean the treatment had a negative impact?
+
+```{r include=TRUE}
+library(scales)
+par(mfrow=c(3,1), mar=c(3,4,3,1))
+lalonde %>% 
+  filter( treat ==1 ) %>%
+  with(hist(re74 ,col='skyblue',border=FALSE,breaks= 20,
+            main='Earning distribution of treatment and control 74')) 
+lalonde %>% 
+  filter( treat ==0 ) %>%
+  with(hist(re74 ,col=scales::alpha('red',.5),breaks= 20, border=FALSE, add=TRUE,
+            main='Earning distribution of treatment and control 74'))
+legend(x=30000,y=100,c("treatment","control"),cex=.8,col=c("skyblue",scales::alpha('red',.5)),
+       fill=c("skyblue",scales::alpha('red',.5)))
+
+lalonde %>% 
+  filter( treat ==1 ) %>%
+  with(hist(educ ,col='skyblue',border=FALSE,breaks= 20,
+            main='Educ. distribution of treatment and control')) 
+lalonde %>% 
+  filter( treat ==0 ) %>%
+  with(hist(educ ,col=scales::alpha('red',.5),breaks= 20, border=FALSE, add=TRUE,
+            main='Edu. of treatment and control'))
+legend(x=14,y=40,c("treatment","control"),cex=.8,col=c("skyblue",scales::alpha('red',.5)),
+       fill=c("skyblue",scales::alpha('red',.5)))
+
+lalonde %>% 
+  filter( treat ==1 ) %>%
+  with(hist(age ,col='skyblue',border=FALSE,breaks= 20,
+            main='Age distribution of treatment and control')) 
+lalonde %>% 
+  filter( treat ==0 ) %>%
+  with(hist(age ,col=scales::alpha('red',.5),breaks= 20, border=FALSE, add=TRUE,
+            main='Age of treatment and control'))
+legend(x=45,y=24,c("treatment","control"),cex=.8,col=c("skyblue",scales::alpha('red',.5)),
+       fill=c("skyblue",scales::alpha('red',.5)))
+
+```
+
+## Matching Process
+
+After processing data, I run an logit model to analysis some previous results about **Propensity score model**. It used the treatment variable like depend variable and the others variables are independent variables. The equation looks something like this: 
+
+$$P\left(treatment_{i}=1|X\right) = age_{i}+edu_{i}+married_{i}+nodegree_{i}+re78_{i}+black_{i}+hispan_{i}$$
+
+I estimate that equation and analyze the beta coefficients and their statistical significant. Also, the white dummy variable is omitted when I estimate the equation.
+
+The results show:
+
+- **educ**, **nodegree**, **black**, **hispan** have a positive relationship with the treatment variable and are statistically significant.
+- **married** has a negative relationship with the treatment variable and is statistically significant.
+
+```{r ,echo=TRUE}
+library(glm2)
+propensity.score.model <- glm(treat ~ age+educ+married+nodegree+black+hispan,family=binomial() , data= lalonde)
+pscore <- propensity.score.model$fitted.values
+summary(propensity.score.model)
+```
+After analyzing the results, I apply the matching method to form the new control and treatment groups.
+The following shows the parameters used by the function:
+
+```
+matchit(formula, data, method = "nearest", distance = "logit",
+               distance.options = list(), discard = "none",
+               reestimate = FALSE, ...)
+```
+Where:
+These are the main arguments:
+
+- **formula**: this argument takes the usual syntax of R formula.
+- **data**: this argument specifies the used data.
+- **method**: this argument specifies a matching method. 
+  - "exact" (exact matching)
+  - "full" (full matching)
+  - "genetic" (genetic matching)
+  - "nearest" (nearest neighbor matching), it's the default option.
+  - "optimal" (optimal matching)
+  - "subclass" (subclassification)
+- **distance**: this argument specifies the method used to estimate the distance measure (logistic regression *"logit"* is the default option).
+- **discard**: this argument specifies whether to discard units that fall outside some measure of support of the distance score before matching, and not allow them to be used at all in the matching procedure. Note that discarding units may change the quantity of interest being estimated. The options are: 
+  - **"none"** is the default, which discards no units before matching
+  - **"both"** which discards all units (treated and control) that are outside the support of the distance measure
+  - **"control"** which discards only control units outside the support of the distance measure of the treated units
+  - **"treat"** which discards only treated units outside the support of the distance measure of the control units.
+- **reestimate**: this argument specifies whether the model for distance measure should be re-estimated after units are discarded. The input must be a logical value. The default is FALSE.
+- **ratio**: it's about how many control units should be matched to each treated unit in k:1 matching.
+
+
+Here, I apply the *matchit process* with a ratio of 2.
+```{r ,echo=TRUE}
+match_method <- matchit(treat ~ age+educ+married+nodegree+black+hispan , 
+                        data=lalonde,  method='nearest',ratio= 2 )
+match_method
+```
+Then, I show the propensity score distribution before and after matching. 
+You can see that there are many observations with a probability or propensity score less than 0.15.
+
+```{r ,echo=TRUE}
+plot(match_method ,type='jitter')
+```
+
+A histogram plot is shown below and you can see that the propensity score distribution for the treated and control groups doesn't change significantly (before & after Matching)
+
+```{r ,echo=TRUE}
+plot(match_method, type='hist', col.axis=4 )
+```
+Mean difference of each variable for before and after *match process*
+```{r include=TRUE, message=FALSE}
+library(cobalt)
+love.plot(bal.tab(match_method,binary='std', m.threshold=0.3),
+          stat='mean.diffs', abs=F, shapes=c('triangle filled', 'circle filled'),
+          colors = c("red", "blue"), sample.names = c("Before Match", "After Match") )
+```   
+
+Now, I save the new treatment and control groups and can used for estimate model.
+```{r ,echo=TRUE}
+new_treat <- match.data(match_method, group='treat')
+new_control <- match.data(match_method, group='control')
+```
