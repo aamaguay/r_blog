@@ -7,6 +7,9 @@ main:
   - name: Blogs
     url: '#blogs'
     weight: 20
+  - name: Work in progress
+    url: '#progress'
+    weight: 25
   - name: Publications & Reports
     url: '#publications'
     weight: 30

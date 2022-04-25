@@ -37,7 +37,7 @@ experience:
         * Prepared technical reports.
         
   - title: Research Assistant
-    company: ESPOL
+    company: ESPOL - NC State University
     company_url: 'https://www.espol.edu.ec/'
     company_logo: es
     location: Guayaquil, Ecuador
@@ -56,7 +56,7 @@ experience:
     date_end: '2021-02-28'
     description: |2-
         Responsibilities include:
-        * Researcher in projects about Socio-economic Evaluation from ESPOL and Cerveceria Nacional.
+        * Researcher in projects about Socio-economic Evaluation from ESPOL, Cerveceria Nacional, and navigable cruise tourism in the Galapagos Islands.
         * Performed statistical analysis and developed econometric models (Causal Inference & Propensity Score Matching Methods)
     
   - title: Research Assistant

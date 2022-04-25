@@ -48,7 +48,7 @@ superuser: true
 title: Alex Amaguaya
 ---
 
-Alex works as a Data Scientist in a Business Intelligence company and usually collaborates in ESPOL research projects. He also has experience working with Social Media and Financial data. And he is interested in developing research involving Econometrics and Machine Learning (intersection of the two fields).
+Alex works as a Data Scientist in a Business Intelligence company and usually collaborates in ESPOL research projects. He also has experience working with Social Media and Financial data. And he is interested in developing research involving Econometrics and Machine Learning (intersection of fields).
 
 {{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/cv.pdf" "newtab" >}}resumé{{< /staticref >}}.
 
