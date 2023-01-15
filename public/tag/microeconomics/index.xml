@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Microeconomics | Home</title>
+    <link>https://alexamaguaya.netlify.app/tag/microeconomics/</link>
+      <atom:link href="https://alexamaguaya.netlify.app/tag/microeconomics/index.xml" rel="self" type="application/rss+xml" />
+    <description>Microeconomics</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Tue, 15 Mar 2022 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://alexamaguaya.netlify.app/media/icon_hu5780078c897cba07574cc50c11c83320_24532_512x512_fill_lanczos_center_3.png</url>
+      <title>Microeconomics</title>
+      <link>https://alexamaguaya.netlify.app/tag/microeconomics/</link>
+    </image>
+    
+    <item>
+      <title>Red de Administradores Compartidos y su Relación con el Desempeño Financiero en Empresas del Ecuador: ¿Cuál es el efecto de compartir Capital Humano?</title>
+      <link>https://alexamaguaya.netlify.app/publication/manager_network/</link>
+      <pubDate>Tue, 15 Mar 2022 00:00:00 +0000</pubDate>
+      <guid>https://alexamaguaya.netlify.app/publication/manager_network/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>MatchIt Example: Nonparametric Preprocessing for Parametric Causal Inference</title>
+      <link>https://alexamaguaya.netlify.app/blog/causal-inference/</link>
+      <pubDate>Tue, 09 Nov 2021 21:13:14 -0500</pubDate>
+      <guid>https://alexamaguaya.netlify.app/blog/causal-inference/</guid>
+      <description>
+&lt;script src=&#34;https://alexamaguaya.netlify.app/blog/causal-inference/index.en_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;style type=&#34;text/css&#34;&gt;
+
+body {
+  font-size: 14pt;
+}
+
+h1 { /* Header 2 */
+    font-size: 32px;
+    color: #cf0a0d;
+    font-weight: bold;
+}
+
+h2 { /* Header 1 */
+  font-size: 24px;
+  color: #d3ad12;
+  font-weight: bold;
+}
+
+&lt;/style&gt;
+&lt;div id=&#34;formation-of-treated-and-control-groups-for-causal-inference&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Formation of Treated and Control groups for Causal Inference&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;MatchIt&lt;/em&gt;&lt;/strong&gt; is a R package for processing data using nonparametric matching methods to improve the estimation of parametric statistical models.&lt;br /&gt;
+See more information about package &lt;a href=&#34;https://www.jstatsoft.org/article/view/v042i08&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In this example I use a &lt;strong&gt;lalonde&lt;/strong&gt; data set, where each row has the data of a person with some features and a treatment variable &lt;strong&gt;(job training program)&lt;/strong&gt;. The goal of this example is to evaluate the effectiveness of the treatment on an individual’s income a few years after completing the program.&lt;/p&gt;
+&lt;p&gt;First, I show statistical metrics about the data set, where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;treat&lt;/strong&gt; is a binary variable and if it’s equal to 1 a person took the treatment and 0 is the opposite case.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;age&lt;/strong&gt; is the age of a person.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;educ&lt;/strong&gt; is the years of schooling of a person.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;race&lt;/strong&gt; is a categorical variable and represent the race of a person, e.g. black, hispan, white.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;married&lt;/strong&gt; is a binary variable and if it’s equall to 1 a person is married and 0 is the opposite case.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;nodegree&lt;/strong&gt; is a binary variable and if it’s equall to 1 a person had not a degree and 0 is the opposite case.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;re74&lt;/strong&gt; is the real earnings in 1974.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;re75&lt;/strong&gt; is the real earnings in 1975.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;re78&lt;/strong&gt; is the real earnings in 1978.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;MatchIt&amp;quot;)
+data(&amp;quot;lalonde&amp;quot;)
+summary(lalonde)
+##      treat             age             educ           race        married      
+##  Min.   :0.0000   Min.   :16.00   Min.   : 0.00   black :243   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:20.00   1st Qu.: 9.00   hispan: 72   1st Qu.:0.0000  
+##  Median :0.0000   Median :25.00   Median :11.00   white :299   Median :0.0000  
+##  Mean   :0.3013   Mean   :27.36   Mean   :10.27                Mean   :0.4153  
+##  3rd Qu.:1.0000   3rd Qu.:32.00   3rd Qu.:12.00                3rd Qu.:1.0000  
+##  Max.   :1.0000   Max.   :55.00   Max.   :18.00                Max.   :1.0000  
+##     nodegree           re74            re75              re78        
+##  Min.   :0.0000   Min.   :    0   Min.   :    0.0   Min.   :    0.0  
+##  1st Qu.:0.0000   1st Qu.:    0   1st Qu.:    0.0   1st Qu.:  238.3  
+##  Median :1.0000   Median : 1042   Median :  601.5   Median : 4759.0  
+##  Mean   :0.6303   Mean   : 4558   Mean   : 2184.9   Mean   : 6792.8  
+##  3rd Qu.:1.0000   3rd Qu.: 7888   3rd Qu.: 3249.0   3rd Qu.:10893.6  
+##  Max.   :1.0000   Max.   :35040   Max.   :25142.2   Max.   :60307.9&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now, I process the data using &lt;em&gt;fastDummies&lt;/em&gt; library to create binary variables of the categorical feature (race) and rename these variables. Moreover, in this example I only use the &lt;strong&gt;re78&lt;/strong&gt; variable.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
+## 
+## Attaching package: &amp;#39;dplyr&amp;#39;
+## The following objects are masked from &amp;#39;package:stats&amp;#39;:
+## 
+##     filter, lag
+## The following objects are masked from &amp;#39;package:base&amp;#39;:
+## 
+##     intersect, setdiff, setequal, union
+library(fastDummies)
+lalonde &amp;lt;- dummy_cols(lalonde, select_columns = c(&amp;#39;race&amp;#39;),remove_selected_columns = TRUE) %&amp;gt;% 
+  rename(
+    black = race_black,
+    hispan = race_hispan,
+    white= race_white )&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;exploratory-data-analysis&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Exploratory Data Analysis&lt;/h2&gt;
+&lt;p&gt;The average income of the Control Group is more bigger than the Treatment Group in 1974 (5619 vs 2095)&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table_comp_74 &amp;lt;-lalonde %&amp;gt;% 
+  group_by(treat) %&amp;gt;% 
+  summarise_at( vars(re74), list(mean = mean, median = median ))
+head(table_comp_74)
+## # A tibble: 2 × 3
+##   treat  mean median
+##   &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt;  &amp;lt;dbl&amp;gt;
+## 1     0 5619.  2547.
+## 2     1 2096.     0&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The difference in mean income of the Control and Treatment groups appear to be reduced in 1978. (6984 vs 6349)&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table_comp_78 &amp;lt;-lalonde %&amp;gt;% 
+  group_by(treat) %&amp;gt;% 
+  summarise_at( vars(re78), list(mean = mean, median = median ))
+head(table_comp_78)
+## # A tibble: 2 × 3
+##   treat  mean median
+##   &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt;  &amp;lt;dbl&amp;gt;
+## 1     0 6984.  4976.
+## 2     1 6349.  4232.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The control group has higher earning that the treatment group - does this mean the treatment had a negative impact?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(scales)
+par(mfrow=c(3,1), mar=c(3,4,3,1))
+lalonde %&amp;gt;% 
+  filter( treat ==1 ) %&amp;gt;%
+  with(hist(re74 ,col=&amp;#39;skyblue&amp;#39;,border=FALSE,breaks= 20,
+            main=&amp;#39;Earning distribution of treatment and control 74&amp;#39;)) 
+lalonde %&amp;gt;% 
+  filter( treat ==0 ) %&amp;gt;%
+  with(hist(re74 ,col=scales::alpha(&amp;#39;red&amp;#39;,.5),breaks= 20, border=FALSE, add=TRUE,
+            main=&amp;#39;Earning distribution of treatment and control 74&amp;#39;))
+legend(x=30000,y=100,c(&amp;quot;treatment&amp;quot;,&amp;quot;control&amp;quot;),cex=.8,col=c(&amp;quot;skyblue&amp;quot;,scales::alpha(&amp;#39;red&amp;#39;,.5)),
+       fill=c(&amp;quot;skyblue&amp;quot;,scales::alpha(&amp;#39;red&amp;#39;,.5)))
+
+lalonde %&amp;gt;% 
+  filter( treat ==1 ) %&amp;gt;%
+  with(hist(educ ,col=&amp;#39;skyblue&amp;#39;,border=FALSE,breaks= 20,
+            main=&amp;#39;Educ. distribution of treatment and control&amp;#39;)) 
+lalonde %&amp;gt;% 
+  filter( treat ==0 ) %&amp;gt;%
+  with(hist(educ ,col=scales::alpha(&amp;#39;red&amp;#39;,.5),breaks= 20, border=FALSE, add=TRUE,
+            main=&amp;#39;Edu. of treatment and control&amp;#39;))
+legend(x=14,y=40,c(&amp;quot;treatment&amp;quot;,&amp;quot;control&amp;quot;),cex=.8,col=c(&amp;quot;skyblue&amp;quot;,scales::alpha(&amp;#39;red&amp;#39;,.5)),
+       fill=c(&amp;quot;skyblue&amp;quot;,scales::alpha(&amp;#39;red&amp;#39;,.5)))
+
+lalonde %&amp;gt;% 
+  filter( treat ==1 ) %&amp;gt;%
+  with(hist(age ,col=&amp;#39;skyblue&amp;#39;,border=FALSE,breaks= 20,
+            main=&amp;#39;Age distribution of treatment and control&amp;#39;)) 
+lalonde %&amp;gt;% 
+  filter( treat ==0 ) %&amp;gt;%
+  with(hist(age ,col=scales::alpha(&amp;#39;red&amp;#39;,.5),breaks= 20, border=FALSE, add=TRUE,
+            main=&amp;#39;Age of treatment and control&amp;#39;))
+legend(x=45,y=24,c(&amp;quot;treatment&amp;quot;,&amp;quot;control&amp;quot;),cex=.8,col=c(&amp;quot;skyblue&amp;quot;,scales::alpha(&amp;#39;red&amp;#39;,.5)),
+       fill=c(&amp;quot;skyblue&amp;quot;,scales::alpha(&amp;#39;red&amp;#39;,.5)))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://alexamaguaya.netlify.app/blog/causal-inference/index.en_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;matching-process&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Matching Process&lt;/h2&gt;
+&lt;p&gt;After processing data, I run an logit model to analysis some previous results about &lt;strong&gt;Propensity score model&lt;/strong&gt;. It used the treatment variable like depend variable and the others variables are independent variables. The equation looks something like this:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[P\left(treatment_{i}=1|X\right) = age_{i}+edu_{i}+married_{i}+nodegree_{i}+re78_{i}+black_{i}+hispan_{i}\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;I estimate that equation and analyze the beta coefficients and their statistical significant. Also, the white dummy variable is omitted when I estimate the equation.&lt;/p&gt;
+&lt;p&gt;The results show:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;educ&lt;/strong&gt;, &lt;strong&gt;nodegree&lt;/strong&gt;, &lt;strong&gt;black&lt;/strong&gt;, &lt;strong&gt;hispan&lt;/strong&gt; have a positive relationship with the treatment variable and are statistically significant.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;married&lt;/strong&gt; has a negative relationship with the treatment variable and is statistically significant.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(glm2)
+propensity.score.model &amp;lt;- glm(treat ~ age+educ+married+nodegree+black+hispan,family=binomial() , data= lalonde)
+pscore &amp;lt;- propensity.score.model$fitted.values
+summary(propensity.score.model)
+## 
+## Call:
+## glm(formula = treat ~ age + educ + married + nodegree + black + 
+##     hispan, family = binomial(), data = lalonde)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.7709  -0.4606  -0.2963   0.7766   2.6384  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&amp;gt;|z|)    
+## (Intercept) -4.67874    1.02120  -4.582 4.61e-06 ***
+## age          0.01030    0.01329   0.775  0.43857    
+## educ         0.15161    0.06568   2.308  0.02098 *  
+## married     -0.92969    0.27128  -3.427  0.00061 ***
+## nodegree     0.78719    0.33507   2.349  0.01881 *  
+## black        3.12657    0.28514  10.965  &amp;lt; 2e-16 ***
+## hispan       0.99947    0.42191   2.369  0.01784 *  
+## ---
+## Signif. codes:  0 &amp;#39;***&amp;#39; 0.001 &amp;#39;**&amp;#39; 0.01 &amp;#39;*&amp;#39; 0.05 &amp;#39;.&amp;#39; 0.1 &amp;#39; &amp;#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 751.49  on 613  degrees of freedom
+## Residual deviance: 494.70  on 607  degrees of freedom
+## AIC: 508.7
+## 
+## Number of Fisher Scoring iterations: 5&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;After analyzing the results, I apply the matching method to form the new control and treatment groups.
+The following shows the parameters used by the function:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;matchit(formula, data, method = &amp;quot;nearest&amp;quot;, distance = &amp;quot;logit&amp;quot;,
+               distance.options = list(), discard = &amp;quot;none&amp;quot;,
+               reestimate = FALSE, ...)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Where:
+These are the main arguments:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;formula&lt;/strong&gt;: this argument takes the usual syntax of R formula.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;data&lt;/strong&gt;: this argument specifies the used data.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;method&lt;/strong&gt;: this argument specifies a matching method.
+&lt;ul&gt;
+&lt;li&gt;“exact” (exact matching)&lt;/li&gt;
+&lt;li&gt;“full” (full matching)&lt;/li&gt;
+&lt;li&gt;“genetic” (genetic matching)&lt;/li&gt;
+&lt;li&gt;“nearest” (nearest neighbor matching), it’s the default option.&lt;/li&gt;
+&lt;li&gt;“optimal” (optimal matching)&lt;/li&gt;
+&lt;li&gt;“subclass” (subclassification)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;distance&lt;/strong&gt;: this argument specifies the method used to estimate the distance measure (logistic regression &lt;em&gt;“logit”&lt;/em&gt; is the default option).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;discard&lt;/strong&gt;: this argument specifies whether to discard units that fall outside some measure of support of the distance score before matching, and not allow them to be used at all in the matching procedure. Note that discarding units may change the quantity of interest being estimated. The options are:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;“none”&lt;/strong&gt; is the default, which discards no units before matching&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;“both”&lt;/strong&gt; which discards all units (treated and control) that are outside the support of the distance measure&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;“control”&lt;/strong&gt; which discards only control units outside the support of the distance measure of the treated units&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;“treat”&lt;/strong&gt; which discards only treated units outside the support of the distance measure of the control units.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;reestimate&lt;/strong&gt;: this argument specifies whether the model for distance measure should be re-estimated after units are discarded. The input must be a logical value. The default is FALSE.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ratio&lt;/strong&gt;: it’s about how many control units should be matched to each treated unit in k:1 matching.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Here, I apply the &lt;em&gt;matchit process&lt;/em&gt; with a ratio of 2.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;match_method &amp;lt;- matchit(treat ~ age+educ+married+nodegree+black+hispan , 
+                        data=lalonde,  method=&amp;#39;nearest&amp;#39;,ratio= 2 )
+match_method
+## A matchit object
+##  - method: Variable ratio 2:1 nearest neighbor matching without replacement
+##  - distance: Propensity score
+##              - estimated with logistic regression
+##  - number of obs.: 614 (original), 555 (matched)
+##  - target estimand: ATT
+##  - covariates: age, educ, married, nodegree, black, hispan&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then, I show the propensity score distribution before and after matching.
+You can see that there are many observations with a probability or propensity score less than 0.15.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(match_method ,type=&amp;#39;jitter&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://alexamaguaya.netlify.app/blog/causal-inference/index.en_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;To identify the units, use first mouse button; to stop, use second.&amp;quot;
+## integer(0)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A histogram plot is shown below and you can see that the propensity score distribution for the treated and control groups doesn’t change significantly (before &amp;amp; after Matching)&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(match_method, type=&amp;#39;hist&amp;#39;, col.axis=4 )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://alexamaguaya.netlify.app/blog/causal-inference/index.en_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;
+Mean difference of each variable for before and after &lt;em&gt;match process&lt;/em&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(cobalt)
+love.plot(bal.tab(match_method,binary=&amp;#39;std&amp;#39;, m.threshold=0.3),
+          stat=&amp;#39;mean.diffs&amp;#39;, abs=F, shapes=c(&amp;#39;triangle filled&amp;#39;, &amp;#39;circle filled&amp;#39;),
+          colors = c(&amp;quot;red&amp;quot;, &amp;quot;blue&amp;quot;), sample.names = c(&amp;quot;Before Match&amp;quot;, &amp;quot;After Match&amp;quot;) )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://alexamaguaya.netlify.app/blog/causal-inference/index.en_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Now, I save the new treatment and control groups and can used for estimate model.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;new_treat &amp;lt;- match.data(match_method, group=&amp;#39;treat&amp;#39;)
+new_control &amp;lt;- match.data(match_method, group=&amp;#39;control&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

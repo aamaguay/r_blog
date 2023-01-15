@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Alex Amaguaya | Home</title>
+    <link>https://alexamaguaya.netlify.app/author/alex-amaguaya/</link>
+      <atom:link href="https://alexamaguaya.netlify.app/author/alex-amaguaya/index.xml" rel="self" type="application/rss+xml" />
+    <description>Alex Amaguaya</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Tue, 15 Mar 2022 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://alexamaguaya.netlify.app/author/alex-amaguaya/avatar_hu190f1bc02d2354e09d3be517d16ead80_14831_270x270_fill_q75_lanczos_center.jpg</url>
+      <title>Alex Amaguaya</title>
+      <link>https://alexamaguaya.netlify.app/author/alex-amaguaya/</link>
+    </image>
+    
+    <item>
+      <title>Evaluación de la contribución económica de la Escuela Superior Politécnica del Litoral - ESPOL: Un análisis de corto y largo plazo</title>
+      <link>https://alexamaguaya.netlify.app/publication/report_espol_idb/</link>
+      <pubDate>Tue, 15 Mar 2022 00:00:00 +0000</pubDate>
+      <guid>https://alexamaguaya.netlify.app/publication/report_espol_idb/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Red de Administradores Compartidos y su Relación con el Desempeño Financiero en Empresas del Ecuador: ¿Cuál es el efecto de compartir Capital Humano?</title>
+      <link>https://alexamaguaya.netlify.app/publication/manager_network/</link>
+      <pubDate>Tue, 15 Mar 2022 00:00:00 +0000</pubDate>
+      <guid>https://alexamaguaya.netlify.app/publication/manager_network/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Eficiencia del Gasto en Publicidad Analizado a través de Datos en Twitter Para Empresas del Sector Comercio en el Periodo 2018</title>
+      <link>https://alexamaguaya.netlify.app/publication/social_media/</link>
+      <pubDate>Tue, 01 Mar 2022 00:00:00 +0000</pubDate>
+      <guid>https://alexamaguaya.netlify.app/publication/social_media/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Contribución Económica del turismo de Crucero Navegable en el Archipiélago de Galápagos y el país</title>
+      <link>https://alexamaguaya.netlify.app/publication/report_cip/</link>
+      <pubDate>Sat, 20 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>https://alexamaguaya.netlify.app/publication/report_cip/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

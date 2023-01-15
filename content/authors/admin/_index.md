@@ -5,6 +5,9 @@ education:
   - course: B.Sc. in Economics (with a Big Data Specialization)
     institution: ESPOL
     year: 2019
+  - course: M.Sc. in Econometrics
+    institution: TU Dortmund, UDE and RUB
+    year: 2022
 email: "alexamaguayap@gmail.com"
 highlight_name: false
 #interests:
@@ -18,9 +21,9 @@ highlight_name: false
 #- Behavioral Economics
 #- Social Media
 
-organizations:
-- name: Nodel-MavenRoad ~ ESPOL
-  url: https://mavenroad.com/
+#organizations:
+#- name: Nodel-MavenRoad ~ ESPOL
+#  url: https://mavenroad.com/
 role: Research Assistant / Data Scientist
 social:
 - icon: envelope
@@ -48,7 +51,7 @@ superuser: true
 title: Alex Amaguaya
 ---
 
-Alex works as a Data Scientist in a Business Intelligence company and usually collaborates in ESPOL research projects. He also has experience working with Social Media and Financial data. And he is interested in developing research involving Econometrics and Machine Learning (intersection of fields).
+Alex works as a Data Scientist and usually collaborates in ESPOL research projects. He also has experience working with Social Media and Financial data. And he is interested in developing research involving Econometrics and Machine Learning (intersection of fields). Now, I'm a first year Econometrics master student at TU Dortmund, RUB and RUB.
 
 {{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/cv.pdf" "newtab" >}}resumé{{< /staticref >}}.
 

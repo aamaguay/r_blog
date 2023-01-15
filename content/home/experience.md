@@ -28,7 +28,7 @@ experience:
     company_logo: mv
     location: Guayaquil, Ecuador
     date_start: '2021-04-12'
-    date_end: ''
+    date_end: '2022-12-31'
     description: |2-
         Responsibilities include:
         * Performed statistical and Time Series Analysis.

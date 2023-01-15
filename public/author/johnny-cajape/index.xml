@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Johnny Cajape | Home</title>
+    <link>https://alexamaguaya.netlify.app/author/johnny-cajape/</link>
+      <atom:link href="https://alexamaguaya.netlify.app/author/johnny-cajape/index.xml" rel="self" type="application/rss+xml" />
+    <description>Johnny Cajape</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Tue, 01 Mar 2022 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://alexamaguaya.netlify.app/media/icon_hu5780078c897cba07574cc50c11c83320_24532_512x512_fill_lanczos_center_3.png</url>
+      <title>Johnny Cajape</title>
+      <link>https://alexamaguaya.netlify.app/author/johnny-cajape/</link>
+    </image>
+    
+    <item>
+      <title>Eficiencia del Gasto en Publicidad Analizado a través de Datos en Twitter Para Empresas del Sector Comercio en el Periodo 2018</title>
+      <link>https://alexamaguaya.netlify.app/publication/social_media/</link>
+      <pubDate>Tue, 01 Mar 2022 00:00:00 +0000</pubDate>
+      <guid>https://alexamaguaya.netlify.app/publication/social_media/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

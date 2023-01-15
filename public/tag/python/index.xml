@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python | Home</title>
+    <link>https://alexamaguaya.netlify.app/tag/python/</link>
+      <atom:link href="https://alexamaguaya.netlify.app/tag/python/index.xml" rel="self" type="application/rss+xml" />
+    <description>Python</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Thu, 10 Feb 2022 14:15:14 -0500</lastBuildDate>
+    <image>
+      <url>https://alexamaguaya.netlify.app/media/icon_hu5780078c897cba07574cc50c11c83320_24532_512x512_fill_lanczos_center_3.png</url>
+      <title>Python</title>
+      <link>https://alexamaguaya.netlify.app/tag/python/</link>
+    </image>
+    
+    <item>
+      <title>Twitter Streaming</title>
+      <link>https://alexamaguaya.netlify.app/blog/twitter_listener/</link>
+      <pubDate>Thu, 10 Feb 2022 14:15:14 -0500</pubDate>
+      <guid>https://alexamaguaya.netlify.app/blog/twitter_listener/</guid>
+      <description>
+&lt;script src=&#34;https://alexamaguaya.netlify.app/blog/twitter_listener/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;style type=&#34;text/css&#34;&gt;
+
+body {
+  font-size: 14pt;
+}
+
+h1 { /* Header 2 */
+    font-size: 32px;
+    color: #168d1e;
+    font-weight: bold;
+}
+
+h2 { /* Header 1 */
+  font-size: 24px;
+  color: #dc7b1e;
+  font-weight: bold;
+}
+&lt;/style&gt;
+&lt;div id=&#34;stream-listener-of-twitter&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Stream Listener of Twitter&lt;/h1&gt;
+&lt;p&gt;This is a fast and easy example about how download twitter data.&lt;/p&gt;
+&lt;div id=&#34;imports&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Imports&lt;/h2&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;import tweepy
+from tweepy import Stream
+import pandas as pd
+import json
+from datetime import datetime&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;functions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Functions&lt;/h1&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def get_tweet_type(tweet):
+    source_tweet = False
+    type_tw = &amp;quot;TW&amp;quot;
+    try:
+        tmp = tweet[&amp;#39;retweeted_status&amp;#39;]
+        source_tweet = tmp[&amp;#39;id&amp;#39;]
+        type_tw = &amp;quot;RT&amp;quot;
+    except:
+        pass
+    try:
+        tmp = tweet[&amp;#39;quoted_status&amp;#39;]
+        source_tweet = tmp[&amp;#39;id&amp;#39;]
+        type_tw = &amp;quot;QT&amp;quot;
+    except:
+        pass
+    try:
+        tmp = tweet[&amp;#39;in_reply_to_status_id&amp;#39;]
+        if tmp != None and type == &amp;quot;TW&amp;quot;:
+            type_tw = &amp;quot;RP&amp;quot;
+            source_tweet = tmp
+    except:
+        pass
+    return type_tw, source_tweet&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;class&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Class&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;h2 id=&#34;twitter-stream-listener&#34;&gt;Twitter Stream Listener&lt;/h2&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;class StdOutListener(Stream):
+    &amp;quot;&amp;quot;&amp;quot;
+    This is a listener that just prints received tweets to stdout.
+    &amp;quot;&amp;quot;&amp;quot;
+    def __init__(self, fetched_tweets_filename):
+        self.fetched_tweets_filename = fetched_tweets_filename
+
+    def on_data(self, data):
+        try:
+            print(data)
+            data = json.loads(data)
+            if None == data[&amp;quot;in_reply_to_screen_name&amp;quot;]:
+                in_reply_to_screen_name = &amp;#39;nan&amp;#39;
+            else:
+                in_reply_to_screen_name = str(data[&amp;quot;in_reply_to_screen_name&amp;quot;])
+                
+            try:
+                ls_dict = data[&amp;#39;entities&amp;#39;][&amp;#39;user_mentions&amp;#39;]
+                user_mentions = &amp;#39;~&amp;#39;.join( [ v_dict[&amp;#39;screen_name&amp;#39;] for v_dict in ls_dict ] )
+            except:
+                user_mentions = &amp;#39;nan&amp;#39;
+                
+            try:
+                ls_dict = data[&amp;#39;entities&amp;#39;][&amp;#39;hashtags&amp;#39;]
+                hash_mentions = &amp;#39;~&amp;#39;.join( [ v_dict[&amp;#39;text&amp;#39;] for v_dict in ls_dict ] )
+            except:
+                hash_mentions = &amp;#39;nan&amp;#39;
+            
+            text = (data[&amp;quot;text&amp;quot;].strip()).replace(&amp;#39;\n&amp;#39;,&amp;#39;&amp;#39;)     
+            created = data[&amp;quot;created_at&amp;quot;]
+            created = datetime.strftime(datetime.strptime(created, &amp;#39;%a %b %d %H:%M:%S +0000 %Y&amp;#39;), &amp;#39;%Y-%m-%d %H:%M:%S&amp;#39;)
+            type_tw, source_tweet = get_tweet_type(data)
+            retweets = data[&amp;#39;retweet_count&amp;#39;]
+            favorites = data[&amp;#39;favorite_count&amp;#39;]
+            quote_counts = data[&amp;quot;quote_count&amp;quot;]
+            lang = data[&amp;#39;lang&amp;#39;]
+            u_id = data[&amp;quot;user&amp;quot;][&amp;quot;id_str&amp;quot;]
+            u_screen_name = data[&amp;quot;user&amp;quot;][&amp;quot;screen_name&amp;quot;]
+            u_followers = data[&amp;quot;user&amp;quot;][&amp;quot;followers_count&amp;quot;]
+            u_followings = data[&amp;quot;user&amp;quot;][&amp;quot;friends_count&amp;quot;]
+            u_location = data[&amp;#39;user&amp;#39;][&amp;#39;location&amp;#39;]
+
+            if (data[&amp;#39;user&amp;#39;][&amp;#39;description&amp;#39;]) != None:
+                u_bio = (data[&amp;#39;user&amp;#39;][&amp;#39;description&amp;#39;]).replace(&amp;#39;\n&amp;#39;,&amp;#39;&amp;#39;)
+            else:
+                u_bio = &amp;#39;nan&amp;#39;
+            u_created = data[&amp;#39;user&amp;#39;][&amp;#39;created_at&amp;#39;] 
+            u_created = datetime.strftime(datetime.strptime(u_created,&amp;#39;%a %b %d %H:%M:%S +0000 %Y&amp;#39;), &amp;#39;%Y-%m-%d %H:%M:%S&amp;#39;)
+
+            new_ls = [ created , text, type_tw, retweets, favorites, quote_counts,lang,
+                     in_reply_to_screen_name, user_mentions, hash_mentions, 
+                     u_id, u_screen_name, u_followers, u_followings, u_location, u_bio, u_created]
+            new_ls = [ &amp;#39;nan&amp;#39; if v == None else v for v in new_ls ]
+            str_data = &amp;#39;~|~&amp;#39;.join(map(str, new_ls))
+                        
+            with open(self.fetched_tweets_filename, &amp;#39;a&amp;#39;) as tf:
+                tf.write(str_data+&amp;#39;\n&amp;#39;)
+
+            return True
+        except BaseException as e:
+            print(&amp;quot;Error on_data %s&amp;quot; % str(e))
+        return True
+          
+    def on_error(self, status):
+        print(status)&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;h2 id=&#34;twitter-streamer&#34;&gt;Twitter Streamer&lt;/h2&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;class TwitterStreamer():
+    &amp;quot;&amp;quot;&amp;quot;
+    Class for streaming and processing live tweets and filter by a location and hashtags.
+    &amp;quot;&amp;quot;&amp;quot;
+    def __init__(self):
+        pass
+
+    def stream_tweets(self, fetched_tweets_filename, hash_tag_list):
+        # This handles Twitter authetification and the connection to Twitter Streaming API
+        listener = StdOutListener(fetched_tweets_filename)
+        auth = tweepy.OAuthHandler(&amp;quot;*******&amp;quot;, &amp;quot;*******&amp;quot;)
+        auth.set_access_token( &amp;quot;*******&amp;quot;, &amp;quot;*******&amp;quot;)
+        stream = Stream(auth, listener)
+
+        # This line attempt to filter Twitter Streams and capture data by the keywords/hashtags: 
+        stream.filter(track=hash_tag_list,locations = [00, 00, 00, 00] )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The following section is executed from the terminal and can change some parameters such as:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;File name&lt;/li&gt;
+&lt;li&gt;Column names&lt;/li&gt;
+&lt;li&gt;Hashtags&lt;/li&gt;
+&lt;li&gt;Location&lt;/li&gt;
+&lt;li&gt;Twitter Passwords&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;if __name__ == &amp;#39;__main__&amp;#39;:
+
+    hash_tag_list = [&amp;quot;********&amp;quot;, &amp;quot;********&amp;quot;, &amp;quot;********&amp;quot;]
+    fetched_tweets_filename = &amp;quot;********.txt&amp;quot;
+    
+    twitter_streamer = TwitterStreamer()
+
+    ls_columns_name = [&amp;quot;created_at&amp;quot;,&amp;quot;text&amp;quot;,&amp;quot;type_tw&amp;quot;,&amp;quot;retweets&amp;quot;,&amp;quot;favorites&amp;quot;,&amp;quot;quotes_count&amp;quot;,&amp;#39;lang&amp;#39;,
+                    &amp;quot;in_reply_to_screen_name&amp;quot;, &amp;#39;users_mentions&amp;#39;, &amp;#39;hashtags_mentions&amp;#39;,
+                    &amp;quot;user_id&amp;quot;, &amp;quot;user_screen_name&amp;quot;,&amp;quot;user_followers&amp;quot;,&amp;quot;user_followings&amp;quot;,&amp;quot;user_location&amp;quot;,
+                    &amp;quot;user_bio&amp;quot;, &amp;quot;user_created_at&amp;quot;]
+    str_colnames = &amp;#39;~|~&amp;#39;.join(ls_columns_name)
+
+    with open(fetched_tweets_filename, &amp;#39;w&amp;#39;) as tf:
+        tf.write(str_colnames)
+        tf.write(&amp;#39;\n&amp;#39;)
+
+    twitter_streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

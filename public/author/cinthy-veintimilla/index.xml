@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cinthy Veintimilla | Home</title>
+    <link>https://alexamaguaya.netlify.app/author/cinthy-veintimilla/</link>
+      <atom:link href="https://alexamaguaya.netlify.app/author/cinthy-veintimilla/index.xml" rel="self" type="application/rss+xml" />
+    <description>Cinthy Veintimilla</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sat, 20 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://alexamaguaya.netlify.app/media/icon_hu5780078c897cba07574cc50c11c83320_24532_512x512_fill_lanczos_center_3.png</url>
+      <title>Cinthy Veintimilla</title>
+      <link>https://alexamaguaya.netlify.app/author/cinthy-veintimilla/</link>
+    </image>
+    
+    <item>
+      <title>Contribución Económica del turismo de Crucero Navegable en el Archipiélago de Galápagos y el país</title>
+      <link>https://alexamaguaya.netlify.app/publication/report_cip/</link>
+      <pubDate>Sat, 20 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>https://alexamaguaya.netlify.app/publication/report_cip/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
