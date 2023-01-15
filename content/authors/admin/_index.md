@@ -7,7 +7,7 @@ education:
     year: 2019
   - course: M.Sc. in Econometrics
     institution: TU Dortmund, UDE and RUB
-    year: 2022
+    year: 2024
 email: "alexamaguayap@gmail.com"
 highlight_name: false
 #interests:
