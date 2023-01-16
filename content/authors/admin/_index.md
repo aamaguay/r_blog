@@ -51,7 +51,7 @@ superuser: true
 title: Alex Amaguaya
 ---
 
-Alex works as a Data Scientist and usually collaborates in ESPOL research projects. He also has experience working with Social Media and Financial data. And he is interested in developing research involving Econometrics and Machine Learning (intersection of fields). Now, I'm a first year Econometrics master student at TU Dortmund, RUB and RUB.
+Alex works as a Data Scientist and usually collaborates in ESPOL research projects. He also has experience working with Social Media and Financial data. And he is interested in developing research involving Econometrics and Machine Learning (intersection of fields). Now, I'm a first year Econometrics master student at TU Dortmund, UDE and RUB.
 
 {{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/cv.pdf" "newtab" >}}resumé{{< /staticref >}}.
 
